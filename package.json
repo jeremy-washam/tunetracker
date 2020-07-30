@@ -5,7 +5,7 @@
   "scripts": {
     "start": "NODE_ENV=development webpack-dev-server",
     "test": "eslint src",
-    "build": "yarn clean; NODE_ENV=production webpack --colors"; cp -f _redirects dist/,
+    "build": "yarn clean; NODE_ENV=production webpack --colors; cp -f _redirects dist/",
     "clean": "rimraf dist",
     "deploy": "yarn build; surge -p dist -d jeremywasham-starterv3.surge.sh; yarn deploy"
   },
