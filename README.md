@@ -1,11 +1,11 @@
-# Title
+# Starterpack
 
-*description*
+## List of deployed projects
 
-[deployed url](http://url-if-deployed-here)
+[SA3 - First starterpack]( http://jeremywasham-cs52-starter.surge.sh/)
 
-## What Worked Well
+[SA5 - Routing](http://jeremywasham-cs52-routingshort.surge.sh/)
 
-## What Didn't
+[SA6 - Counter](http://jeremywasham-starterv4.surge.sh/)
 
-## Screenshots
+[SA6 - Youtube](http://jeremywasham-cs52-mytube-redux.surge.sh/)
