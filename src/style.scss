@@ -1,0 +1,229 @@
+/* Themes */
+
+$text: white;
+$accent: #40dac9;
+
+
+
+/* General styles */
+
+
+body {
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-image: linear-gradient(#1e252c, black);
+    font-family: "Roboto", sans-serif;
+}
+
+a {
+    text-decoration: none;
+    color: $text;
+}
+
+/* Nav styes */
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #14181c;
+    padding-right: 80px;
+    padding-left: 60px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+
+    .navleft {
+        display: flex;
+        align-items: center;
+        font-size: 2rem;
+        font-weight: bold;
+        color: $text;
+
+        p {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+    }
+
+    ul {
+        display: flex;
+        list-style: none;
+
+        li a {
+            color: $text;
+            font-weight: bold;
+        }
+
+        .navlink {
+            font-size: 1.2rem;
+            padding-left: 30px;
+            
+        }
+        
+        .navlink:hover {
+            color: $accent;
+        }
+    }
+
+    .icon {
+        padding-right: 5px;
+    }
+}
+
+.active {
+    color: $accent;
+}
+
+/* Posts styles */
+
+.welcome {
+    margin-top: 50px;
+    margin-bottom: 25px;
+    color: $text;
+    text-align: center;
+    font-size: 1.5rem;
+}
+
+.posts {
+    display: flex;
+    flex-direction: row;
+    list-style: none;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+}
+
+.post{
+    margin: 25px;
+    background-color: black;
+    border: 1px #3c3f41 solid;
+    width: 220px;
+
+    img{
+        max-width: 220px;
+    }
+
+    .title {
+        padding-top: 10px;
+        padding-bottom: 10px;
+        color: $text;
+        text-align: center;
+        font-size: 1.5rem;
+        font-weight: bold;
+        max-width: 220px;
+    }
+
+    .tags {
+        text-align: center;
+        padding-bottom: 10px;
+        color: $text;
+    }
+}
+
+.post:hover {
+    box-shadow: 0 0 0 3px $accent;
+    transition: 0.2s;
+}
+
+/* Post styles */
+
+.postDisplay {
+    display: flex;
+    justify-content: center;
+}
+
+.fullPost {
+    background-color: #68747f;
+    color: $text;
+    max-width: 800px;
+    margin-top: 100px;
+    border-radius: 30px;
+    display: flex;
+
+    img{
+        max-width: 220px;
+    }
+
+    .postLeft {
+        max-width: 250px;
+        padding-top: 20px;
+        padding-left: 20px;
+        padding-bottom: 20px;
+
+        .postTags {
+            padding-top: 10px;
+            max-width: 250px;
+        }
+
+        .errorMessage {
+            color: $accent;
+            font-weight: bold;
+            padding-bottom: 0px;
+            margin-bottom: 0px;
+        }
+    }
+
+    .postRight {
+        max-width: 250px;
+        padding: 20px;
+
+        .postTitle{
+            font-size: 2rem;
+            font-weight: bold;
+            color: $text;
+            padding-bottom: 20px;
+        }
+
+        .postContent {
+            font-size: 1.2rem;
+            padding-bottom: 20px;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: left;
+            padding-right: 50px;
+        }
+
+        .postIcon {
+            padding-left: 10px;
+            padding-right: 10px;
+            font-size: 1.2rem;
+        }
+
+        .postIcon:hover {
+            color: $accent;
+            cursor: pointer;
+        }
+    }
+
+    textarea {
+        width: 230px;
+        height: 70px;
+        margin-bottom: 20px;
+        border: none;
+        border-radius: 5px;
+        outline: none;
+        resize: none;
+        font-size: 1.2rem;
+        font-family: "Roboto", sans-serif;
+    }
+
+    .bigContent {
+        height: 120px;
+        margin-bottom: 5px;
+
+    }
+
+    .editButtons {
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    p {
+        margin-top: 0px;
+        margin-bottom: 5px;
+    }
+}
