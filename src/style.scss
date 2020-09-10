@@ -3,10 +3,7 @@
 $text: white;
 $accent: #40dac9;
 
-
-
 /* General styles */
-
 
 body {
     height: 100%;
@@ -79,20 +76,33 @@ nav {
 
 /* Posts styles */
 
-.welcome {
-    margin-top: 50px;
-    margin-bottom: 25px;
-    color: $text;
-    text-align: center;
-    font-size: 1.5rem;
-}
-
 .posts {
     display: flex;
     flex-direction: row;
     list-style: none;
     justify-content: flex-start;
     flex-wrap: wrap;
+}
+
+.filter {
+    display: flex;
+    color: white;
+    margin-left: 65px;
+    font-size: 1.2rem;
+    margin-top: 20px;
+
+    p {
+        padding-right: 10px;
+    }
+
+    .filterItem:hover {
+        color: $accent;
+        cursor: pointer;
+    }
+}
+
+.selected {
+    color: $accent;
 }
 
 .post{
@@ -107,12 +117,17 @@ nav {
 
     .title {
         padding-top: 10px;
-        padding-bottom: 10px;
+        padding-bottom: 5px;
         color: $text;
         text-align: center;
         font-size: 1.5rem;
         font-weight: bold;
         max-width: 220px;
+    }
+
+    .rating {
+        text-align: center;
+        padding-bottom: 5px;
     }
 
     .tags {
@@ -162,7 +177,14 @@ nav {
             font-weight: bold;
             padding-bottom: 0px;
             margin-bottom: 0px;
+            max-width: 220px;
         }
+
+        
+    }
+
+    .postRating {
+        margin-bottom: 10px;
     }
 
     .postRight {
@@ -173,7 +195,7 @@ nav {
             font-size: 2rem;
             font-weight: bold;
             color: $text;
-            padding-bottom: 20px;
+            padding-bottom: 10px;
         }
 
         .postContent {
@@ -202,7 +224,7 @@ nav {
     textarea {
         width: 230px;
         height: 70px;
-        margin-bottom: 20px;
+        margin-bottom: 10px;
         border: none;
         border-radius: 5px;
         outline: none;
@@ -211,10 +233,22 @@ nav {
         font-family: "Roboto", sans-serif;
     }
 
-    .bigContent {
-        height: 120px;
-        margin-bottom: 5px;
+    .coverInput {
+        height: 100px;
+        margin-bottom: 10px;
+    }
 
+    .coverInputEdit {
+        height: 120px;
+        margin-bottom: 10px;
+    }
+
+    .contentInput {
+        height: 192px;
+    }
+
+    .ratingInput {
+        height: 30px;
     }
 
     .editButtons {
@@ -226,4 +260,12 @@ nav {
         margin-top: 0px;
         margin-bottom: 5px;
     }
+}
+
+.pnf {
+    margin-top: 50px;
+    margin-bottom: 25px;
+    color: $text;
+    text-align: center;
+    font-size: 1.5rem;
 }

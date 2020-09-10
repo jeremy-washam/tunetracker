@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const ROOT_URL = 'https://platform.cs52.me/api';
+const ROOT_URL = 'https://lab5-platform-api-jeremywasham.herokuapp.com/api';
 const API_KEY = '?jeremy_washam';
 
 export const ActionTypes = {
@@ -17,6 +17,26 @@ export function fetchPosts() {
   // remember (arg) => { } is a function
   return (dispatch) => {
     axios.get(`${ROOT_URL}/posts${API_KEY}`)
+      .then((response) => {
+        // once we are done fetching we can dispatch a redux action with the response data
+        dispatch({ type: ActionTypes.FETCH_POSTS, payload: response.data });
+      })
+      .catch((error) => {
+        // whaaat?
+        // dispatch an error, use it in a separate error reducer. this is the beauty of redux.
+        // have an error component somewhere show it
+        dispatch({ type: ActionTypes.ERROR_SET, error });
+        // might you also want an ERROR_CLEAR action?
+      });
+  };
+}
+
+export function fetchPostsByRating() {
+  // ActionCreator returns a function
+  // that gets called with dispatch
+  // remember (arg) => { } is a function
+  return (dispatch) => {
+    axios.get(`${ROOT_URL}/posts2${API_KEY}`)
       .then((response) => {
         // once we are done fetching we can dispatch a redux action with the response data
         dispatch({ type: ActionTypes.FETCH_POSTS, payload: response.data });

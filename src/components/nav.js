@@ -13,7 +13,7 @@ const Nav = (props) => {
     <nav>
       <div className="navleft">
         <FontAwesomeIcon className="icon" icon={faFilm} />
-        <p>Film Finder</p>
+        <p>FilmFinder</p>
       </div>
       <ul>
         <li>

@@ -17,7 +17,7 @@ const App = (props) => {
           <Route exact path="/" component={Posts} />
           <Route path="/posts/new" component={NewPost} />
           <Route path="/posts/:postID" component={Post} />
-          <Route render={() => (<div>post not found </div>)} />
+          <Route render={() => (<div className="pnf">Post not found </div>)} />
         </Switch>
       </div>
     </Router>

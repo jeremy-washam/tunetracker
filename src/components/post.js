@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import {
   Link,
 } from 'react-router-dom';
+import StarRatings from 'react-star-ratings';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faTrash, faEdit, faSave, faArrowLeft,
@@ -21,6 +22,7 @@ class Post extends Component {
       tags: '',
       content: '',
       coverUrl: '',
+      rating: '',
     };
   }
 
@@ -39,6 +41,7 @@ class Post extends Component {
       tags: this.props.currentPost.tags,
       content: this.props.currentPost.content,
       coverUrl: this.props.currentPost.coverUrl,
+      rating: this.props.currentPost.rating,
     });
   }
 
@@ -63,6 +66,10 @@ class Post extends Component {
     this.setState({ coverUrl: event.target.value });
   }
 
+  onRatingChange = (event) => {
+    this.setState({ rating: event.target.value });
+  }
+
   renderEditPost = () => {
     return (
       <div className="postDisplay">
@@ -71,13 +78,15 @@ class Post extends Component {
             <p>Tags:</p>
             <textarea value={this.state.tags} onChange={this.onTagsChange} />
             <p>Cover URL:</p>
-            <textarea className="bigContent" value={this.state.coverUrl} onChange={this.onCoverUrlChange} />
+            <textarea className="coverInputEdit" value={this.state.coverUrl} onChange={this.onCoverUrlChange} />
+            <p>Rating (out of 5 stars):</p>
+            <textarea className="ratingInput" value={this.state.rating} onChange={this.onRatingChange} />
           </div>
           <div className="postRight">
             <p>Film title:</p>
             <textarea value={this.state.title} onChange={this.onTitleChange} />
             <p>Review:</p>
-            <textarea className="bigContent" value={this.state.content} onChange={this.onContentChange} />
+            <textarea className="contentInput" value={this.state.content} onChange={this.onContentChange} />
             <div className="editButtons">
               <FontAwesomeIcon className="postIcon" onClick={this.handleSave} icon={faSave} />
               <FontAwesomeIcon className="postIcon" onClick={this.handleDelete} icon={faTrash} />
@@ -98,6 +107,9 @@ class Post extends Component {
           </div>
           <div className="postRight">
             <div className="postTitle">{this.props.currentPost.title}</div>
+            <div className="postRating">
+              <StarRatings rating={this.props.currentPost.rating} starRatedColor="gold" starEmptyColor="#9ea3a8" numberOfStars={5} name="rating" starDimension={30} starSpacing={2} />
+            </div>
             <div className="postContent" dangerouslySetInnerHTML={{ __html: marked(this.props.currentPost.content || '') }} />
             <div className="buttons">
               <Link to="/"><FontAwesomeIcon className="postIcon" icon={faArrowLeft} /></Link>
