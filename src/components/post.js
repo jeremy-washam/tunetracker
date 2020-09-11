@@ -103,7 +103,8 @@ class Post extends Component {
         <div className="fullPost">
           <div className="postLeft">
             <img src={this.props.currentPost.coverUrl} alt="" />
-            <div className="postTags">tags: {this.props.currentPost.tags}</div>
+            <div className="postTags">Author: {this.props.currentPost.username}</div>
+            <div className="postTags">Tags: {this.props.currentPost.tags}</div>
           </div>
           <div className="postRight">
             <div className="postTitle">{this.props.currentPost.title}</div>

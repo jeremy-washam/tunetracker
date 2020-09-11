@@ -5,7 +5,7 @@ const initialState = {
   current: {},
 };
 
-const postsReducer = (state = initialState, action) => {
+const PostsReducer = (state = initialState, action) => {
   switch (action.type) {
     case ActionTypes.FETCH_POSTS:
       return { current: {}, all: action.payload };
@@ -18,4 +18,4 @@ const postsReducer = (state = initialState, action) => {
   }
 };
 
-export default postsReducer;
+export default PostsReducer;
