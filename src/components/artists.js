@@ -1,6 +1,9 @@
+/* eslint-disable quotes */
+/* eslint-disable quote-props */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { fetchArtists } from '../actions/index';
+// import Spotify from 'spotify-web-api-js';
+import { fetchArtists, fetchUserID } from '../actions/index';
 
 class Artists extends Component {
   constructor(props) {
@@ -13,6 +16,7 @@ class Artists extends Component {
   }
 
   componentDidMount() {
+    this.props.fetchUserID(this.props.token);
     this.props.fetchArtists(this.props.token, 'long_term');
   }
 
@@ -23,7 +27,6 @@ class Artists extends Component {
       isMediumTerm: false,
       isShortTerm: false,
     });
-    console.log(this.props.artists);
   }
 
   handleMediumTerm = () => {
@@ -33,7 +36,6 @@ class Artists extends Component {
       isMediumTerm: true,
       isShortTerm: false,
     });
-    console.log(this.props.artists);
   }
 
   handleShortTerm = () => {
@@ -43,19 +45,48 @@ class Artists extends Component {
       isMediumTerm: false,
       isShortTerm: true,
     });
-    console.log(this.props.artists);
   }
 
+  /* Used this to test whether image is undefined:
+  https://codeburst.io/uncaught-typeerror-cannot-read-property-of-undefined-in-javascript-c81e00f4a5e3 */
   renderArtists = () => {
+    /* Figure this stuff out
+    const SpotifyAPI = new Spotify();
+    SpotifyAPI.setAccessToken(this.props.token);
+
+    const ids = this.props.artists.map((artist) => {
+      return (
+        artist.id
+      );
+    });
+
+    SpotifyAPI.getArtistTopTracks(ids, 'US').then((data) => {
+      console.log(data);
+    });
+
+    const topTracks = ids.map((id) => {
+      return (
+
+      );
+    });
+    console.log(topTracks);
+    */
+    console.log(this.props.artists);
     const renderedArtists = this.props.artists.map((artist) => {
       return (
-        <li key={artist.id}>
-          <img src={artist.images[0].url} alt="" />
-          <div className="itemText">
-            <div className="title">{artist.name}</div>
-            <div className="subtitle">{artist.genres}</div>
-          </div>
-        </li>
+        <a key={artist.id} href={artist.external_urls.spotify} target="_blank" rel="noreferrer">
+          <li key={artist.id}>
+            <img src={typeof (artist.images[0]) === 'undefined'
+              ? 'https://i1.wp.com/fortbendseniors.org/wp-content/uploads/2019/01/blank-white-square-thumbnail.jpg?fit=900%2C900&ssl=1&w=640'
+              : artist.images[0].url}
+              alt=""
+            />
+            <div className="itemText">
+              <div className="title">{artist.name}</div>
+              <div className="subtitle">{artist.genres.slice(0, 5).join(', ')}</div>
+            </div>
+          </li>
+        </a>
       );
     });
 
@@ -72,7 +103,7 @@ class Artists extends Component {
           <p className={`${this.state.isMediumTerm ? 'selected' : ''}`} onClick={this.handleMediumTerm}> Past 6 Months</p>
           <p className={`${this.state.isShortTerm ? 'selected' : ''}`} onClick={this.handleShortTerm}> Past Month</p>
         </div>
-        <button type="submit">CREATE PLAYLIST</button>
+        <button type="submit" onClick={this.handleCreatePlaylist}>CREATE PLAYLIST</button>
         <ol>
           {this.renderArtists()}
         </ol>
@@ -84,7 +115,8 @@ class Artists extends Component {
 function mapStateToProps(reduxState) {
   return {
     artists: reduxState.artists.items,
+    userID: reduxState.user.id,
   };
 }
 
-export default connect(mapStateToProps, { fetchArtists })(Artists);
+export default connect(mapStateToProps, { fetchArtists, fetchUserID })(Artists);

@@ -1,22 +1,22 @@
-/* eslint-disable quote-props */
-/* eslint-disable no-useless-concat */
-/* eslint-disable max-len */
 import Spotify from 'spotify-web-api-js';
+import axios from 'axios';
 
 export const ActionTypes = {
   FETCH_ARTISTS: 'FETCH_ARTISTS',
   FETCH_TRACKS: 'FETCH_TRACKS',
   FETCH_RECENT: 'FETCH_RECENT',
+  FETCH_USERID: 'FETCH_USERID',
+  CREATE_PLAYLIST: 'CREATE_PLAYLIST',
+  GET_PLAYLIST: 'GET_PLAYLIST',
   ERROR_SET: 'ERROR_SET',
 };
 
 export function fetchArtists(token, range) {
-  const spotifyApi = new Spotify();
-  spotifyApi.setAccessToken(token);
+  const SpotifyAPI = new Spotify();
+  SpotifyAPI.setAccessToken(token);
   return (dispatch) => {
-    spotifyApi.getMyTopArtists({ limit: 30, time_range: range })
+    SpotifyAPI.getMyTopArtists({ limit: 50, time_range: range })
       .then((data) => {
-        console.log('Artists:', data);
         dispatch({ type: ActionTypes.FETCH_ARTISTS, payload: data });
       })
       .catch((error) => {
@@ -26,12 +26,11 @@ export function fetchArtists(token, range) {
 }
 
 export function fetchTracks(token, range) {
-  const spotifyApi = new Spotify();
-  spotifyApi.setAccessToken(token);
+  const SpotifyAPI = new Spotify();
+  SpotifyAPI.setAccessToken(token);
   return (dispatch) => {
-    spotifyApi.getMyTopTracks({ limit: 50, time_range: range })
+    SpotifyAPI.getMyTopTracks({ limit: 50, time_range: range })
       .then((data) => {
-        console.log('Tracks:', data);
         dispatch({ type: ActionTypes.FETCH_TRACKS, payload: data });
       })
       .catch((error) => {
@@ -41,12 +40,11 @@ export function fetchTracks(token, range) {
 }
 
 export function fetchRecentHistory(token) {
-  const spotifyApi = new Spotify();
-  spotifyApi.setAccessToken(token);
+  const SpotifyAPI = new Spotify();
+  SpotifyAPI.setAccessToken(token);
   return (dispatch) => {
-    spotifyApi.getMyRecentlyPlayedTracks({ limit: 50 })
+    SpotifyAPI.getMyRecentlyPlayedTracks({ limit: 50 })
       .then((data) => {
-        console.log('Tracks:', data);
         dispatch({ type: ActionTypes.FETCH_RECENT, payload: data });
       })
       .catch((error) => {
@@ -55,24 +53,40 @@ export function fetchRecentHistory(token) {
   };
 }
 
-/*
-export function fetchLongTermArtists() {
-  // ActionCreator returns a function
-  // that gets called with dispatch
-  // remember (arg) => { } is a function
+/* The Spotify API library I used doesn't provide a function to fetch userID,
+so I wrote this  to grab that to use in the other functions i.e. creating playlist */
+export function fetchUserID(token) {
   return (dispatch) => {
-    axios.get(`${ROOT_URL}/posts${API_KEY}`)
-      .then((response) => {
-        // once we are done fetching we can dispatch a redux action with the response data
-        dispatch({ type: ActionTypes.FETCH_ARTISTS, payload: response.data });
-      })
+    axios({
+      method: 'get',
+      url: 'https://api.spotify.com/v1/me',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }).then((response) => {
+      dispatch({ type: ActionTypes.FETCH_USERID, payload: response.data });
+    })
       .catch((error) => {
-        // whaaat?
-        // dispatch an error, use it in a separate error reducer. this is the beauty of redux.
-        // have an error component somewhere show it
         dispatch({ type: ActionTypes.ERROR_SET, error });
-        // might you also want an ERROR_CLEAR action?
       });
   };
 }
-*/
+
+/* Do I need to dispatch an action here? */
+export function createPlaylist(token, userID, playlistName, uris) {
+  return (dispatch) => {
+    const spotifyAPI = new Spotify();
+    spotifyAPI.setAccessToken(token);
+    spotifyAPI.createPlaylist(userID, { name: playlistName }).then((response) => {
+      spotifyAPI.addTracksToPlaylist(response.id, uris).then(() => {
+        spotifyAPI.getPlaylist(response.id).then((data) => {
+          dispatch({ type: ActionTypes.CREATE_PLAYLIST, payload: data.images[0].url });
+        });
+      }).catch((error) => {
+        dispatch({ type: ActionTypes.ERROR_SET, error });
+      });
+    }).catch((error) => {
+      dispatch({ type: ActionTypes.ERROR_SET, error });
+    });
+  };
+}

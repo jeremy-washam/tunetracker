@@ -40,20 +40,29 @@ class App extends Component {
 
   /* Used this to pass token to child components:
   https://dev.to/halented/passing-state-to-components-rendered-by-react-router-and-other-fun-things-3pjf */
+  /* Attribution for the logo: tune by Ranah Pixel Studio from the Noun Project */
   render() {
     return (
       <div className="App">
         {!this.state.token && (
         <div className="loginPage">
-          <h1>Tune Tracker</h1>
-          <a
-            className="btn btn--loginApp-link"
-            href={`${authEndpoint}?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scopes.join(
-              '%20',
-            )}&response_type=token&show_dialog=true`}
-          >
-            Sign in with Spotify
-          </a>
+          <div className="header">
+            <img id="logo" src="./src/images/tune.png" alt="" />
+          </div>
+          <div className="content">
+            <h1>Rediscover Your Greatest Hits on Spotify</h1>
+            <p>
+              With Tune Tracker, you can explore your top artists and top tracks on Spotify. ADD TO THIS
+            </p>
+            <a
+              className="btn btn--loginApp-link"
+              href={`${authEndpoint}?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scopes.join(
+                '%20',
+              )}&response_type=token&show_dialog=true`}
+            >
+              Sign in with Spotify
+            </a>
+          </div>
         </div>
         )}
         {this.state.token && (

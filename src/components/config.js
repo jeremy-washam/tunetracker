@@ -8,4 +8,6 @@ export const redirectUri = 'http://localhost:8080/redirect';
 export const scopes = [
   'user-top-read',
   'user-read-recently-played',
+  'playlist-modify-public',
+  'playlist-modify-private',
 ];

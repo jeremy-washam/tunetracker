@@ -7,7 +7,7 @@
     "test": "eslint src",
     "build": "yarn clean; NODE_ENV=production webpack --colors",
     "clean": "rimraf dist",
-    "deploy": "yarn build; surge -p dist -d jeremywasham-filmfinder-final.surge.sh; yarn deploy"
+    "deploy": "yarn build; surge -p dist -d http://jeremywasham-tunetracker1.surge.sh; yarn deploy"
   },
   "repository": "https://github.com/dartmouth-cs52-20X/starterpack-jeremy-washam.git",
   "author": "jdwasham <Jeremy.19@dartmouth.edu>",
@@ -54,8 +54,10 @@
     "jquery": "^3.5.1",
     "lodash.debounce": "^4.0.8",
     "marked": "^1.1.1",
+    "moment": "^2.28.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-modal": "^3.11.2",
     "react-redux": "^7.2.1",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
