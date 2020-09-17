@@ -1,13 +1,20 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import { fetchRecentHistory, fetchUserID, createPlaylist } from '../actions/index';
+import Modal from 'react-modal';
+import {
+  fetchRecentHistory, fetchUserID, createPlaylist, clearPlaylist, setRecentOrder,
+} from '../actions/index';
+
+/* Changing the style in CSS didn't work for some reason so I did this instead */
+/* Found this on the README for the react-modal library that I used */
+Modal.defaultStyles.overlay.backgroundColor = 'rgba(50, 50, 50, 0.75)';
 
 class Recent extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isChronological: false,
+      showModal: false,
     };
   }
 
@@ -18,21 +25,17 @@ class Recent extends Component {
 
   handleMostRecent = () => {
     this.props.fetchRecentHistory(this.props.token);
-    this.setState({
-      isChronological: false,
-    });
+    this.props.setRecentOrder(false);
   }
 
   handleChronological = () => {
     this.props.fetchRecentHistory(this.props.token);
-    this.setState({
-      isChronological: true,
-    });
+    this.props.setRecentOrder(true);
   }
 
   handleCreatePlaylist = () => {
     const date = moment().format('MMMM YYYY');
-    const name = `Your Recently Played Tracks: ${date}`;
+    const name = `Your Recently Played Tracks from ${date}`;
     const uris = this.props.recent.map((track) => {
       return (
         track.track.uri
@@ -40,14 +43,22 @@ class Recent extends Component {
     });
 
     this.props.createPlaylist(this.props.token, this.props.userID, name, uris);
+
+    this.setState({
+      showModal: true,
+    });
+  }
+
+  handleCloseModal = () => {
+    this.setState({
+      showModal: false,
+    });
   }
 
   renderTracks = () => {
-    if (this.state.isChronological === true) {
+    if (this.props.isChronological === true) {
       this.props.recent.reverse();
     }
-
-    console.log(this.props.recent);
 
     const renderedTracks = this.props.recent.map((track) => {
       return (
@@ -73,13 +84,30 @@ class Recent extends Component {
       <div className="main">
         <h1>Your Recently Played Tracks</h1>
         <div className="timeRange">
-          <p className={`${this.state.isChronological ? '' : 'selected'}`} onClick={this.handleMostRecent}>Most Recent</p>
-          <p className={`${this.state.isChronological ? 'selected' : ''}`} onClick={this.handleChronological}>Chronological</p>
+          <p className={`${this.props.isChronological ? '' : 'selected'}`} onClick={this.handleMostRecent}>Most Recent</p>
+          <p className={`${this.props.isChronological ? 'selected' : ''}`} onClick={this.handleChronological}>Chronological</p>
         </div>
         <button type="submit" onClick={this.handleCreatePlaylist}>CREATE PLAYLIST</button>
         <ul>
           {this.renderTracks()}
         </ul>
+        <Modal className="playlistModal" isOpen={this.state.showModal} ariaHideApp={false}>
+          <h1>Created! Your Top Tracks {this.state.name}</h1>
+          <img className="loading" src={this.props.playlistImage} alt="" />
+          <div className="modalButtons">
+            <a href={this.props.playlistLink} target="_blank" rel="noreferrer">
+              <button type="button">OPEN PLAYLIST</button>
+            </a>
+            <button className="closeButton"
+              type="button"
+              onClick={() => {
+                this.props.clearPlaylist();
+                this.handleCloseModal();
+              }}
+            >CLOSE
+            </button>
+          </div>
+        </Modal>
       </div>
     );
   }
@@ -87,9 +115,14 @@ class Recent extends Component {
 
 function mapStateToProps(reduxState) {
   return {
+    isChronological: reduxState.filter.isChronological,
     recent: reduxState.recent.items,
     userID: reduxState.user.id,
+    playlistImage: reduxState.playlist.image,
+    playlistLink: reduxState.playlist.link,
   };
 }
 
-export default connect(mapStateToProps, { fetchRecentHistory, fetchUserID, createPlaylist })(Recent);
+export default connect(mapStateToProps, {
+  fetchRecentHistory, fetchUserID, createPlaylist, clearPlaylist, setRecentOrder,
+})(Recent);

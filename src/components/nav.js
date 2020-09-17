@@ -12,8 +12,7 @@ const Nav = (props) => {
     <nav>
       <NavLink className="navLink" exact to="/">
         <div className="siteName">
-          <h1>Tune</h1>
-          <h1>Tracker</h1>
+          <img id="navLogo" src="./src/images/tune.png" alt="" />
         </div>
       </NavLink>
       <NavLink className="navLink" to="/artists">

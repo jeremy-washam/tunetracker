@@ -51,16 +51,13 @@ class App extends Component {
           </div>
           <div className="content">
             <h1>Rediscover Your Greatest Hits on Spotify</h1>
-            <p>
-              With Tune Tracker, you can explore your top artists and top tracks on Spotify. ADD TO THIS
-            </p>
             <a
               className="btn btn--loginApp-link"
               href={`${authEndpoint}?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scopes.join(
                 '%20',
               )}&response_type=token&show_dialog=true`}
             >
-              Sign in with Spotify
+              SIGN IN WITH YOUR ACCOUNT
             </a>
           </div>
         </div>
