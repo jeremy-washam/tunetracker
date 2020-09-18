@@ -92,7 +92,7 @@ class Recent extends Component {
           {this.renderTracks()}
         </ul>
         <Modal className="playlistModal" isOpen={this.state.showModal} ariaHideApp={false}>
-          <h1>Created! Your Top Tracks {this.state.name}</h1>
+          <h1>Created!</h1>
           <img className="loading" src={this.props.playlistImage} alt="" />
           <div className="modalButtons">
             <a href={this.props.playlistLink} target="_blank" rel="noreferrer">
@@ -115,7 +115,7 @@ class Recent extends Component {
 
 function mapStateToProps(reduxState) {
   return {
-    isChronological: reduxState.filter.isChronological,
+    isChronological: reduxState.recent.isChronological,
     recent: reduxState.recent.items,
     userID: reduxState.user.id,
     playlistImage: reduxState.playlist.image,

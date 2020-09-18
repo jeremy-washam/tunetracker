@@ -7,7 +7,8 @@ import TracksReducer from './tracks-reducer';
 import RecentReducer from './recent-reducer';
 import UserReducer from './user-reducer';
 import PlaylistReducer from './playlist-reducer';
-import FilterReducer from './filter-reducer';
+import TracksAnalysisReducer from './tracks-analysis-reducer';
+import ArtistsAnalysisReducer from './artists-analysis-reducer';
 
 const rootReducer = combineReducers({
   artists: ArtistsReducer,
@@ -15,7 +16,8 @@ const rootReducer = combineReducers({
   recent: RecentReducer,
   user: UserReducer,
   playlist: PlaylistReducer,
-  filter: FilterReducer,
+  tracksAnalysis: TracksAnalysisReducer,
+  artistsAnalysis: ArtistsAnalysisReducer,
 });
 
 export default rootReducer;

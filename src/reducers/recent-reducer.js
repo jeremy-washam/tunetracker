@@ -2,12 +2,15 @@ import { ActionTypes } from '../actions';
 
 const initialState = {
   items: [],
+  isChronological: false,
 };
 
 const RecentReducer = (state = initialState, action) => {
   switch (action.type) {
     case ActionTypes.FETCH_RECENT:
-      return { items: action.payload.items };
+      return { ...state, items: action.payload.items };
+    case ActionTypes.SET_RECENT_ORDER:
+      return { ...state, isChronological: action.payload };
     default:
       return state;
   }

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Modal from 'react-modal';
 import {
-  fetchTracks, fetchUserID, createPlaylist, setTrackTimerange, clearPlaylist,
+  fetchLongTermTracks, fetchMediumTermTracks, fetchShortTermTracks, setTracksInfo, fetchUserID, createPlaylist, clearPlaylist,
 } from '../actions/index';
 
 /* Changing the style in CSS didn't work for some reason so I did this instead */
@@ -13,38 +13,27 @@ class Tracks extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      name: 'of All Time',
       showModal: false,
     };
   }
 
   componentDidMount() {
     this.props.fetchUserID(this.props.token);
-    this.props.fetchTracks(this.props.token, this.props.timerange);
+    this.props.fetchLongTermTracks(this.props.token);
+    this.props.fetchMediumTermTracks(this.props.token);
+    this.props.fetchShortTermTracks(this.props.token);
   }
 
   handleLongTerm = () => {
-    this.props.setTrackTimerange('long_term');
-    this.props.fetchTracks(this.props.token, 'long_term');
-    this.setState({
-      name: 'of All Time',
-    });
+    this.props.setTracksInfo('long_term', 'of All Time', this.props.longTermTracks);
   }
 
   handleMediumTerm = () => {
-    this.props.setTrackTimerange('medium_term');
-    this.props.fetchTracks(this.props.token, 'medium_term');
-    this.setState({
-      name: 'from the Past 6 Months',
-    });
+    this.props.setTracksInfo('medium_term', 'from the Past 6 Months', this.props.mediumTermTracks);
   }
 
   handleShortTerm = () => {
-    this.props.setTrackTimerange('short_term');
-    this.props.fetchTracks(this.props.token, 'short_term');
-    this.setState({
-      name: 'from the Past Month',
-    });
+    this.props.setTracksInfo('short_term', 'from the Past Month', this.props.shortTermTracks);
   }
 
   handleCreatePlaylist = () => {
@@ -53,8 +42,7 @@ class Tracks extends Component {
         track.uri
       );
     });
-    console.log(uris);
-    this.props.createPlaylist(this.props.token, this.props.userID, `Your Top Tracks ${this.state.name}`, uris);
+    this.props.createPlaylist(this.props.token, this.props.userID, `Your Top Tracks ${this.props.name}`, uris);
     this.setState({
       showModal: true,
     });
@@ -67,7 +55,18 @@ class Tracks extends Component {
   }
 
   renderTracks = () => {
-    const renderedTracks = this.props.tracks.map((track) => {
+    let tracks = this.props.longTermTracks;
+    if (this.props.timerange === 'medium_term') {
+      tracks = this.props.mediumTermTracks;
+    } else if (this.props.timerange === 'short_term') {
+      tracks = this.props.shortTermTracks;
+    }
+
+    if (typeof (tracks) === 'undefined') {
+      return (<div />);
+    }
+
+    const renderedTracks = tracks.map((track) => {
       return (
         <a key={track.id} href={track.external_urls.spotify} target="_blank" rel="noreferrer">
           <li key={track.id}>
@@ -101,7 +100,7 @@ class Tracks extends Component {
         </ol>
         <div className="modalContainer">
           <Modal className="playlistModal" isOpen={this.state.showModal} ariaHideApp={false}>
-            <h1>Created! Your Top Tracks {this.state.name}</h1>
+            <h1>Created!</h1>
             <img className="loading" src={this.props.playlistImage} alt="" />
             <div className="modalButtons">
               <a href={this.props.playlistLink} target="_blank" rel="noreferrer">
@@ -125,8 +124,12 @@ class Tracks extends Component {
 
 function mapStateToProps(reduxState) {
   return {
-    timerange: reduxState.filter.trackTimerange,
-    tracks: reduxState.tracks.items,
+    longTermTracks: reduxState.tracks.longTerm,
+    mediumTermTracks: reduxState.tracks.mediumTerm,
+    shortTermTracks: reduxState.tracks.shortTerm,
+    tracks: reduxState.tracks.tracks,
+    timerange: reduxState.tracks.timerange,
+    name: reduxState.tracks.name,
     userID: reduxState.user.id,
     playlistImage: reduxState.playlist.image,
     playlistLink: reduxState.playlist.link,
@@ -134,5 +137,5 @@ function mapStateToProps(reduxState) {
 }
 
 export default connect(mapStateToProps, {
-  fetchTracks, fetchUserID, createPlaylist, setTrackTimerange, clearPlaylist,
+  fetchLongTermTracks, fetchMediumTermTracks, fetchShortTermTracks, setTracksInfo, fetchUserID, createPlaylist, clearPlaylist,
 })(Tracks);

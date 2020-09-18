@@ -7,15 +7,14 @@ import {
   authEndpoint, clientId, redirectUri, scopes,
 } from './config';
 import hash from './hash';
-
-/* I found this here: https://stackoverflow.com/questions/36904185/react-router-scroll-to-top-on-every-transition */
-import ScrollToTop from './scrolltotop';
-
+import Nav from './nav';
 import About from './about';
 import Artists from './artists';
 import Tracks from './tracks';
 import Recent from './recent';
-import Nav from './nav';
+import TracksAnalysis from './tracks-analysis';
+import ArtistsAnalysis from './artists-analysis';
+import ScrollToTop from './scrolltotop';
 
 /* Based on this: https://levelup.gitconnected.com/how-to-build-a-spotify-player-with-react-in-15-minutes-7e01991bc4b6 */
 class App extends Component {
@@ -47,7 +46,7 @@ class App extends Component {
         {!this.state.token && (
         <div className="loginPage">
           <div className="header">
-            <img id="logo" src="./src/images/tune.png" alt="" />
+            <img id="logo" src="https://i.ibb.co/3sj1KnH/tune.png" alt="" />
           </div>
           <div className="content">
             <h1>Rediscover Your Greatest Hits on Spotify</h1>
@@ -76,6 +75,12 @@ class App extends Component {
                 />
                 <Route path="/recent"
                   render={(props) => (<Recent token={this.state.token} />)}
+                />
+                <Route path="/artistsanalysis"
+                  render={(props) => (<ArtistsAnalysis token={this.state.token} />)}
+                />
+                <Route path="/tracksanalysis"
+                  render={(props) => (<TracksAnalysis token={this.state.token} />)}
                 />
                 <Route component={About} />
               </Switch>
