@@ -22,6 +22,18 @@ class Artists extends Component {
     this.props.fetchLongTermArtists(this.props.token);
     this.props.fetchMediumTermArtists(this.props.token);
     this.props.fetchShortTermArtists(this.props.token);
+
+    setTimeout(() => {
+      if (this.props.timerange === 'long_term') {
+        this.handleLongTerm();
+      }
+      if (this.props.timerange === 'medium_term') {
+        this.handleMediumTerm();
+      }
+      if (this.props.timerange === 'short_term') {
+        this.handleShortTerm();
+      }
+    }, 2000);
   }
 
   handleLongTerm = () => {

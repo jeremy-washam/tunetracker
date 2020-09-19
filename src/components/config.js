@@ -4,7 +4,7 @@ export const authEndpoint = 'https://accounts.spotify.com/authorize';
 
 // Replace with your app's client ID, redirect URI and desired scopes
 export const clientId = 'd22d86a92731467a80dea67e666db488';
-export const redirectUri = 'http://localhost:8080/redirect';
+export const redirectUri = 'http://tunetracker.surge.sh/redirect';
 export const scopes = [
   'user-top-read',
   'user-read-recently-played',

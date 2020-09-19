@@ -1,3 +1,4 @@
+/* I used this spotify API library to make all of my API calls: https://github.com/JMPerez/spotify-web-api-js */
 import Spotify from 'spotify-web-api-js';
 import axios from 'axios';
 
@@ -74,6 +75,7 @@ export function fetchShortTermArtists(token) {
   };
 }
 
+/* Used for creating the playlist and for keeping track of which tab/timerange the user is on */
 export function setArtistsInfo(timerange, name, artists) {
   return (dispatch) => {
     dispatch({ type: ActionTypes.SET_ARTISTS_INFO, payload: { timerange, name, artists } });
@@ -123,6 +125,7 @@ export function fetchShortTermTracks(token) {
   };
 }
 
+/* Used for creating the playlist and for keeping track of which tab/timerange the user is on */
 export function setTracksInfo(timerange, name, tracks) {
   return (dispatch) => {
     dispatch({ type: ActionTypes.SET_TRACKS_INFO, payload: { timerange, name, tracks } });
@@ -145,6 +148,7 @@ export function fetchRecentHistory(token) {
   };
 }
 
+/* Used for creating the playlist and for keeping track of which tab/timerange the user is on */
 export function setRecentOrder(isChronological) {
   return (dispatch) => {
     dispatch({ type: ActionTypes.SET_RECENT_ORDER, payload: isChronological });
@@ -154,7 +158,7 @@ export function setRecentOrder(isChronological) {
 /* ************************************************* Playlist actions ************************************************* */
 
 /* The Spotify API library I used doesn't provide a function to fetch userID,
-so I wrote this  to grab that to use in the other functions i.e. creating playlist */
+so used axios to grab that to use in the other functions (namely creating playlist) */
 export function fetchUserID(token) {
   return (dispatch) => {
     axios({
@@ -172,6 +176,7 @@ export function fetchUserID(token) {
   };
 }
 
+/* Create playlist, then add tracks, then return playlist info for the modal */
 export function createPlaylist(token, userID, playlistName, uris) {
   return (dispatch) => {
     const spotifyAPI = new Spotify();
@@ -190,45 +195,45 @@ export function createPlaylist(token, userID, playlistName, uris) {
   };
 }
 
-/* Getting the URIs of artist top tracks was really difficult and this one is a doozy  */
+/* Get IDs of the top 20 artists, get the top 5 tracks for each, add those to the playlist, and return playlist info */
 export function createArtistPlaylist(token, userID, playlistName, artists) {
   return (dispatch) => {
     const SpotifyAPI = new Spotify();
     SpotifyAPI.setAccessToken(token);
 
-    // Get artist IDs
-    const ids = artists.map((artist) => {
+    console.log(artists.length);
+
+    const length = artists.length > 20 ? 20 : artists.length;
+    const tracksPromises = artists.slice(0, length).map((artist) => {
       return (
-        artist.id
+        SpotifyAPI.getArtistTopTracks(artist.id, 'US')
       );
     });
 
-    // Get spotify URIs based on artist IDs
     const uris = [];
-    const length = ids.length > 20 ? 20 : ids.length;
-    for (let index = 0; index < length; index += 1) {
-      SpotifyAPI.getArtistTopTracks(ids[index], 'US').then((response) => {
+    Promise.all(tracksPromises).then((response) => {
+      for (let index = 0; index < length; index += 1) {
         for (let index2 = 0; index2 < 5; index2 += 1) {
-          uris.push(response.tracks[index2].uri);
+          uris.push(response[index].tracks[index2].uri);
         }
-      });
-    }
-
-    // Create playlist like usual
-    SpotifyAPI.createPlaylist(userID, { name: playlistName }).then((response) => {
-      SpotifyAPI.addTracksToPlaylist(response.id, uris).then(() => {
-        SpotifyAPI.getPlaylist(response.id).then((data) => {
-          dispatch({ type: ActionTypes.CREATE_PLAYLIST, payload: data });
+      }
+    }).then(() => {
+      SpotifyAPI.createPlaylist(userID, { name: playlistName }).then((response) => {
+        SpotifyAPI.addTracksToPlaylist(response.id, uris).then(() => {
+          SpotifyAPI.getPlaylist(response.id).then((data) => {
+            dispatch({ type: ActionTypes.CREATE_PLAYLIST, payload: data });
+          });
+        }).catch((error) => {
+          dispatch({ type: ActionTypes.ERROR_SET, error });
         });
       }).catch((error) => {
         dispatch({ type: ActionTypes.ERROR_SET, error });
       });
-    }).catch((error) => {
-      dispatch({ type: ActionTypes.ERROR_SET, error });
     });
   };
 }
 
+/* Clear playlist info when you close the modal */
 export function clearPlaylist() {
   return (dispatch) => {
     dispatch({ type: ActionTypes.CLEAR_PLAYLIST });
@@ -237,26 +242,30 @@ export function clearPlaylist() {
 
 /* ************************************************* Tracks Analysis actions ************************************************* */
 /* Citations:
-  https://stackoverflow.com/questions/9229645/remove-duplicate-values-from-js-array
-  https://stackoverflow.com/questions/12433604/how-can-i-find-matching-values-in-two-arrays
-  https://stackoverflow.com/questions/1187518/how-to-get-the-difference-between-two-arrays-in-javascript
+  set operations: https://2ality.com/2015/01/es6-set-operations.html
+  convert set to array: https://www.geeksforgeeks.org/how-to-convert-set-to-array-in-javascript/
   */
+
 export function getConsistentFavsTracks(token, longTermIDs, mediumTermIDs, shortTermIDs, recentIDs) {
-  // Find the IDs that show up in all time and at least one other time range
-  const consistentFavorites1 = longTermIDs.filter((element) => mediumTermIDs.includes(element));
-  const consistentFavorites2 = consistentFavorites1.concat(longTermIDs.filter((element) => shortTermIDs.includes(element)));
-  const consistentFavorites3 = consistentFavorites2.concat(longTermIDs.filter((element) => recentIDs.includes(element)));
+  // what ids show up in all time and one other category?
+  const intersection1 = new Set(
+    [...longTermIDs].filter((id) => mediumTermIDs.has(id)),
+  );
+  const intersection2 = new Set(
+    [...longTermIDs].filter((id) => shortTermIDs.has(id)),
+  );
+  const intersection3 = new Set(
+    [...longTermIDs].filter((id) => recentIDs.has(id)),
+  );
+  const union = new Set([...intersection1, ...intersection2, ...intersection3]);
 
-  // remove duplicates
-  const consistentFavorites = consistentFavorites3.filter((item, pos) => {
-    return consistentFavorites3.indexOf(item) === pos;
-  });
+  const consistentFavs = [...union];
 
-  // then fetch the tracks from Spotify based on those IDs
+  // fetch the tracks from Spotify based on those IDs
   const SpotifyAPI = new Spotify();
   SpotifyAPI.setAccessToken(token);
   return (dispatch) => {
-    SpotifyAPI.getTracks(consistentFavorites)
+    SpotifyAPI.getTracks(consistentFavs)
       .then((data) => {
         dispatch({ type: ActionTypes.GET_CONSISTENT_FAVS_TRACKS, payload: data });
       })
@@ -267,13 +276,20 @@ export function getConsistentFavsTracks(token, longTermIDs, mediumTermIDs, short
 }
 
 export function getDeepCutsTracks(token, longTermIDs, mediumTermIDs, shortTermIDs, recentIDs) {
-  // Find the track IDs that show up in all time but no other time range
-  const deepCuts1 = longTermIDs;
-  const deepCuts2 = deepCuts1.filter((element) => !mediumTermIDs.includes(element));
-  const deepCuts3 = deepCuts2.filter((element) => !shortTermIDs.includes(element));
-  const deepCuts = deepCuts3.filter((element) => !recentIDs.includes(element));
+  // What ids show up in all time but no other categories?
+  const difference1 = new Set(
+    [...longTermIDs].filter((id) => !mediumTermIDs.has(id)),
+  );
+  const difference2 = new Set(
+    [...difference1].filter((id) => !shortTermIDs.has(id)),
+  );
+  const difference = new Set(
+    [...difference2].filter((id) => !recentIDs.has(id)),
+  );
 
-  // then fetch the tracks from Spotify based on those IDs
+  const deepCuts = [...difference];
+
+  // fetch the tracks from Spotify based on those IDs
   const SpotifyAPI = new Spotify();
   SpotifyAPI.setAccessToken(token);
   return (dispatch) => {
@@ -288,10 +304,14 @@ export function getDeepCutsTracks(token, longTermIDs, mediumTermIDs, shortTermID
 }
 
 export function getOnRepeatTracks(token, shortTermIDs, recentIDs) {
-  // Find the track IDs that show up in short term and in recently played
-  const onRepeat = shortTermIDs.filter((element) => recentIDs.includes(element));
+  // what ids show up in short term and recently played?
+  const intersection = new Set(
+    [...shortTermIDs].filter((id) => recentIDs.has(id)),
+  );
 
-  // then fetch the tracks from Spotify based on those IDs
+  const onRepeat = [...intersection];
+
+  // fetch the tracks from Spotify based on those IDs
   const SpotifyAPI = new Spotify();
   SpotifyAPI.setAccessToken(token);
   return (dispatch) => {
@@ -307,25 +327,27 @@ export function getOnRepeatTracks(token, shortTermIDs, recentIDs) {
 
 /* ************************************************* Artists Analysis actions ************************************************* */
 /* Citations:
-  https://stackoverflow.com/questions/9229645/remove-duplicate-values-from-js-array
-  https://stackoverflow.com/questions/12433604/how-can-i-find-matching-values-in-two-arrays
-  https://stackoverflow.com/questions/1187518/how-to-get-the-difference-between-two-arrays-in-javascript
+  set operations: https://2ality.com/2015/01/es6-set-operations.html
+  convert set to array: https://www.geeksforgeeks.org/how-to-convert-set-to-array-in-javascript/
   */
 export function getConsistentFavsArtists(token, longTermIDs, mediumTermIDs, shortTermIDs) {
-  // Find the IDs that show up in all time and at least one other time range
-  const consistentFavorites1 = longTermIDs.filter((element) => mediumTermIDs.includes(element));
-  const consistentFavorites2 = consistentFavorites1.concat(longTermIDs.filter((element) => shortTermIDs.includes(element)));
+  // What ids show up in all time and one other category?
+  const intersection1 = new Set(
+    [...longTermIDs].filter((id) => mediumTermIDs.has(id)),
+  );
+  const intersection2 = new Set(
+    [...longTermIDs].filter((id) => shortTermIDs.has(id)),
+  );
 
-  // remove duplicates
-  const consistentFavorites = consistentFavorites2.filter((item, pos) => {
-    return consistentFavorites2.indexOf(item) === pos;
-  });
+  const union = new Set([...intersection1, ...intersection2]);
+
+  const consistentFavs = [...union];
 
   // then fetch the tracks from Spotify based on those IDs
   const SpotifyAPI = new Spotify();
   SpotifyAPI.setAccessToken(token);
   return (dispatch) => {
-    SpotifyAPI.getArtists(consistentFavorites)
+    SpotifyAPI.getArtists(consistentFavs)
       .then((data) => {
         dispatch({ type: ActionTypes.GET_CONSISTENT_FAVS_ARTISTS, payload: data });
       })
@@ -336,10 +358,15 @@ export function getConsistentFavsArtists(token, longTermIDs, mediumTermIDs, shor
 }
 
 export function getDeepCutsArtists(token, longTermIDs, mediumTermIDs, shortTermIDs) {
-  // Find the track IDs that show up in all time but no other time range
-  const deepCuts1 = longTermIDs;
-  const deepCuts2 = deepCuts1.filter((element) => !mediumTermIDs.includes(element));
-  const deepCuts = deepCuts2.filter((element) => !shortTermIDs.includes(element));
+  // What ids show up in all time but no other categories?
+  const difference1 = new Set(
+    [...longTermIDs].filter((id) => !mediumTermIDs.has(id)),
+  );
+  const difference2 = new Set(
+    [...difference1].filter((id) => !shortTermIDs.has(id)),
+  );
+
+  const deepCuts = [...difference2];
 
   // then fetch the tracks from Spotify based on those IDs
   const SpotifyAPI = new Spotify();
@@ -356,8 +383,12 @@ export function getDeepCutsArtists(token, longTermIDs, mediumTermIDs, shortTermI
 }
 
 export function getOnRepeatArtists(token, mediumTermIDs, shortTermIDs) {
-  // Find the track IDs that show up in short term and in recently played
-  const onRepeat = mediumTermIDs.filter((element) => shortTermIDs.includes(element));
+  // What ids show up in short term and recently played?
+  const intersection = new Set(
+    [...mediumTermIDs].filter((id) => shortTermIDs.has(id)),
+  );
+
+  const onRepeat = [...intersection];
 
   // then fetch the tracks from Spotify based on those IDs
   const SpotifyAPI = new Spotify();

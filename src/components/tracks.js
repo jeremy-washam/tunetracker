@@ -22,6 +22,18 @@ class Tracks extends Component {
     this.props.fetchLongTermTracks(this.props.token);
     this.props.fetchMediumTermTracks(this.props.token);
     this.props.fetchShortTermTracks(this.props.token);
+
+    setTimeout(() => {
+      if (this.props.timerange === 'long_term') {
+        this.handleLongTerm();
+      }
+      if (this.props.timerange === 'medium_term') {
+        this.handleMediumTerm();
+      }
+      if (this.props.timerange === 'short_term') {
+        this.handleShortTerm();
+      }
+    }, 2000);
   }
 
   handleLongTerm = () => {

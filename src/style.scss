@@ -16,7 +16,7 @@ body {
     background-color: #121212;
 }
 
-/* Login page styles */
+/* ************************************************* Login page styles ************************************************* */
 
 .loginPage {
     font-family: "Roboto", sans-serif;
@@ -96,7 +96,7 @@ body {
     }
 }
 
-/* Nav styes */
+/* ************************************************* Nav styles ************************************************* */
 
 nav {
     float: left;
@@ -164,7 +164,7 @@ nav {
     color: $accent;
 }
 
-/* About styles */
+/* ************************************************* About styles ************************************************* */
 
 .about {
     margin: 0;
@@ -213,7 +213,7 @@ nav {
     }
 }
 
-/* Page styles */
+/* ************************************************* Artists, tracks, recent styles ************************************************* */
 
 .main {
     margin: 0;
@@ -362,7 +362,7 @@ nav {
     }
 }
 
-/* Modal styles */
+/* ************************************************* Modal styles ************************************************* */
 
 .ReactModal__Overlay {
     display: flex;
@@ -429,5 +429,112 @@ nav {
     .closeButton:hover {
         background-color: #4d4d4d;
         cursor: pointer;
+    }
+}
+
+/* ************************************************* Analysis page styles ************************************************* */
+
+.analysisContainer {
+    display: flex;
+    margin-left: 12%;
+    margin-right: 5%;
+
+    .analysisColumn {
+        width: 30%;
+        max-width: 320px;
+        margin: 30px;
+
+        h1 {
+            color: $accent;
+            font-weight: bold;
+            margin-left: 20px;
+            margin: 10px;   
+
+        }
+
+        p {
+            color: $text;
+            font-size: 1.2rem;
+            margin-left: 20px;
+            margin: 10px;   
+
+        }
+
+        button {
+            background-color: $green;
+            color: $accent;
+            border: none;
+            border-radius: 30px;
+            font-family: "Roboto", sans-serif;
+            font-weight: bold;
+            padding: 15px;  
+            margin: 10px;   
+            outline: none;
+            font-size: 0.9rem;
+            padding-left: 20px;
+            padding-right: 20px;       
+        }
+    
+        button:hover {
+            background-color: $darkgreen;
+            cursor: pointer;
+        }
+    }
+
+    a {
+        text-decoration: none;
+    }
+
+    /* Used this for list styling: https://css-tricks.com/custom-list-number-styling/ */
+    ol {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+
+        list-style: none;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        li {
+            margin: 0;
+            display: flex;
+            flex-direction: row;
+        }
+    
+        li:hover {
+            background-color: #242323;
+        }
+
+        img {
+            max-width: 80px;
+            border-radius: 10px;
+            margin: 15px;
+            margin-left: 20px;
+        }
+    }
+
+    .itemText {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .title {
+        padding-bottom: 5px;
+        color: $accent;
+        font-size: 1rem;
+    }
+
+    .subtitle {
+        padding-top: 5px;
+        color: $text;
+        display: flex;
+        justify-content: space-between;
+        width: 680px;
+
+        p {
+            margin: 0;
+        }
     }
 }
