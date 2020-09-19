@@ -6,6 +6,8 @@ Here's the link to my site, which is deployed on surge: [Tune Tracker](http://tu
 
 And here's a little video I put together that shows off all the functionality: [demo](https://vimeo.com/user113969829/review/459585102/d3056eb9cf)
 
+(Note on local setup: be sure to change the redirect URI in config.js to http://localhost:8080/redirect)
+
 ## Features
 
 There are five routes in the navbar, each corresponding to a different view / React component that provides a number of features.
