@@ -24,12 +24,10 @@ class Recent extends Component {
   }
 
   handleMostRecent = () => {
-    this.props.fetchRecentHistory(this.props.token);
     this.props.setRecentOrder(false);
   }
 
   handleChronological = () => {
-    this.props.fetchRecentHistory(this.props.token);
     this.props.setRecentOrder(true);
   }
 
@@ -56,11 +54,12 @@ class Recent extends Component {
   }
 
   renderTracks = () => {
+    let { recent } = this.props;
     if (this.props.isChronological === true) {
-      this.props.recent.reverse();
+      recent = recent.reverse();
     }
 
-    const renderedTracks = this.props.recent.map((track) => {
+    const renderedTracks = recent.map((track) => {
       return (
         <a key={track.played_at} href={track.track.external_urls.spotify} target="_blank" rel="noreferrer">
           <li key={track.played_at}>
@@ -76,6 +75,12 @@ class Recent extends Component {
         </a>
       );
     });
+
+    /* Switch it back or else "chronological" only works every other time */
+    if (this.props.isChronological === true) {
+      recent = recent.reverse();
+    }
+
     return renderedTracks;
   }
 
